@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wynand Janse van Rensburg - CV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <style>
+        /* Enable smooth scrolling for anchor links */
+        html {
+            scroll-behavior: smooth;
+        }
+        /* Animation for section visibility on scroll */
+        .section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease-in-out;
+        }
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800">
+    <!--Header with typing effect-->
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold">
+            <span id="typed-text"></span>
+        </h1>
+        <p class="mt-2 text-lg">IT Enthusiast | Riversdale, South Africa</p>
+    </header>
+    <!--Navigation bar with smooth scrolling links-->
+    <nav class="bg-gray-800 text-white py-4 sticky top-0 z-10 shadow-lg">
+        <div class="container mx-auto flex justify-center space-x-6">
+            <a href="#home" class="hover:text-blue-300 transition-colors">Home</a>
+            <a href="#objective" class="hover:text-blue-300 transition-colors">Objective</a>
+            <a href="#education" class="hover:text-blue-300 transition-colors">Education</a>
+            <a href="#skills" class="hover:text-blue-300 transition-colors">Skills</a>
+            <a href="#projects" class="hover:text-blue-300 transition-colors">Projects</a>
+            <a href="#contact" class="hover:text-blue-300 transition-colors">Contact</a>
+        </div>
+    </nav>
+    <!--Main content container-->
+    <div class="container mx-auto px-4 py-8">
+        <!--Home section with introduction-->
+        <div id="home" class="section bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-semibold mb-4 text-blue-600">Welcome</h2>
+            <p class="text-lg">I'm Wynand Janse van Rensburg, a passionate IT student and developer. This CV website, hosted on a Raspberry Pi 4B, showcases my skills, projects, and aspirations in the field of Information Technology.</p>
+        </div>
+        <!--Career Objective section-->
+        <div id="objective" class="section bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-semibold mb-4 text-blue-600">Career Objective</h2>
+            <p class="text-lg">I am driven to advance my skill set to deliver impactful solutions in IT environments. With coding experience in multiple languages, extensive hardware knowledge, and a solid foundation in systems analysis and IT infrastructure, I aim to contribute both practical and creative solutions to innovative projects.</p>
+        </div>
+        <!--Education section-->
+        <div id="education" class="section bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-semibold mb-4 text-blue-600">Education</h2>
+            <p class="text-lg"><strong>BSc in Information Technology</strong><br>North-West University, 2023â€“2025</p>
+        </div>
+        <!--Skills section-->
+        <div id="skills" class="section bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-semibold mb-4 text-blue-600">Skills</h2>
+            <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg">
+                <li><strong>Programming Languages:</strong> Python, Java, JavaScript, C#, C++</li>
+                <li><strong>Web Development:</strong> HTML, CSS, React</li>
+                <li><strong>Systems Analysis:</strong> Proficient in analyzing and designing IT systems</li>
+                <li><strong>Databases:</strong> SQL, Oracle</li>
+                <li><strong>Tools & Platforms:</strong> Git, GitHub, Visual Studio Code, Node.js, Eclipse</li>
+                <li><strong>IT Infrastructure:</strong> Hardware setup, diagnostics, Networking basics</li>
+                <li><strong>Soft Skills:</strong> Problem-solving, adaptability, communication, teamwork</li>
+		<li><strong>Operating systems:</strong> Windows, Linux</li>
+            </ul>
+        </div>
+        <!--Projects section-->
+        <div id="projects" class="section bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-semibold mb-4 text-blue-600">Projects</h2>
+            <p class="text-lg">Explore my work on GitHub: <a href="https://github.com/WynandJvR?tab=repositories" target="_blank" class="text-blue-600 hover:underline">github.com/WynandlyR7tab-repositories</a></p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div class="bg-gray-50 p-4 rounded-lg shadow hover:shadow-xl transition-shadow">
+                    <h3 class="text-xl font-semibold text-indigo-600">Expense Tracker App</h3>
+                    <p>A Java-based application that tracks a users expenses and gives real time analytics.</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg shadow hover:shadow-xl transition-shadow">
+                    <h3 class="text-xl font-semibold text-indigo-600">Chat Application</h3>
+                    <p>A real time chat app with server-client architecture, featuring robust connection handling.</p>
+                </div>
+            </div>
+        </div>
+        <!--Contact section with form-->
+        <div id="contact" class="section bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-semibold mb-4 text-blue-600">Contact</h2>
+            <p class="text-lg mb-4">
+                Email: <a href="mailto:wynand.0128@gmail.com" class="text-blue-600 hover:underline">wynand.0128@gmail.com</a><br>
+                Phone: 076 255 3289<br>
+                LinkedIn: <a href="https://www.linkedin.com/in/wynand-janse-van-rensburg-953539352/" target="_blank" class="text-blue-600 hover:underline">linkedin.com/in/wynand-janse-van-rensburg</a>
+            </p>
+            <form id="contactForm" class="space-y-4">
+                <div>
+                    <input type="text" id="name" placeholder="Your Name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                    <p id="nameError" class="text-red-500 text-sm hidden">Name must be at least 2 characters.</p>
+                </div>
+                <div>
+                    <input type="email" id="email" placeholder="Your Email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                    <p id="emailError" class="text-red-500 text-sm hidden">Please enter a valid email address.</p>
+                </div>
+                <div>
+                    <textarea id="message" placeholder="Your Message" rows="5" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" required></textarea>
+                    <p id="messageError" class="text-red-500 text-sm hidden">Message must be at least 10 characters.</p>
+                </div>
+                <button type="submit" class="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Send</button>
+            </form>
+        </div>
+    </div>
+    <!--Footer with copyright-->
+    <footer class="bg-gray-800 text-white text-center py-4">
+        <p>Â© 2025 Wynand Janse van Rensburg | Powered by Raspberry Pi</p>
+    </footer>
+    <!--JavaScript for interactivity-->
+    <script>
+        //Dynamic header text
+        new Typed('#typed-text', {
+            strings: [
+                'Wynand Janse van Rensburg',
+                'IT Developer & Innovator',
+                'Building the Future with Code'
+            ],
+            typeSpeed: 40,
+            backSpeed: 30,
+            loop: true
+        });
+
+        // Add visibility animation for sections on scroll
+        const sections = document.querySelectorAll('.section');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        sections.forEach(section => observer.observe(section));
+
+        // Handle contact form submission with client-side validation
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let isValid = true;
+
+            // Reset error messages
+            document.querySelectorAll('.text-red-500').forEach(el => el.classList.add('hidden'));
+
+            // Validate name
+            const name = document.getElementById('name').value;
+            if (name.length < 2) {
+                document.getElementById('nameError').classList.remove('hidden');
+                isValid = false;
+            }
+
+            // Validate email
+            const email = document.getElementById('email').value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                document.getElementById('emailError').classList.remove('hidden');
+                isValid = false;
+            }
+
+            // Validate message
+            const message = document.getElementById('message').value;
+            if (message.length < 10) {
+                document.getElementById('messageError').classList.remove('hidden');
+                isValid = false;
+            }
+
+            if (isValid) {
+                alert('Thank you for your message! This is a demo form and does not send data.');
+                this.reset();
+            }
+        });
+    </script>
+</body>
+</html>
