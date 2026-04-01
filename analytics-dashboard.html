@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Analytics Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*{box-sizing:border-box}
+body{background:#09090b;color:#e4e4e7;font-family:'Inter',system-ui,-apple-system,sans-serif;margin:0}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes countUp{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.fade-in{animation:fadeIn .4s ease-out both}
+.fade-in-1{animation-delay:.05s}.fade-in-2{animation-delay:.1s}.fade-in-3{animation-delay:.15s}.fade-in-4{animation-delay:.2s}
+
+.card{background:linear-gradient(145deg,#18181b,#1c1c20);border:1px solid #27272a;border-radius:16px;padding:1.5rem;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:#3f3f46;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.stat-card{position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:16px 16px 0 0}
+.stat-card:nth-child(1)::before{background:linear-gradient(90deg,#a78bfa,#818cf8)}
+.stat-card:nth-child(2)::before{background:linear-gradient(90deg,#6ee7b7,#34d399)}
+.stat-card:nth-child(3)::before{background:linear-gradient(90deg,#fbbf24,#f59e0b)}
+.stat-card:nth-child(4)::before{background:linear-gradient(90deg,#f87171,#ef4444)}
+.card h3{color:#71717a;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+.card .value{font-size:2.25rem;font-weight:800;color:#fafafa;letter-spacing:-.02em;line-height:1;animation:countUp .3s ease-out}
+.card .sub{color:#52525b;font-size:.75rem;margin-top:.35rem}
+
+.tab-group{background:#18181b;border:1px solid #27272a;border-radius:12px;padding:3px;display:inline-flex;gap:2px}
+.tab{padding:.45rem 1rem;border-radius:10px;cursor:pointer;font-size:.8rem;font-weight:500;color:#71717a;transition:all .2s;border:none;background:none;user-select:none}
+.tab:hover{color:#a1a1aa}
+.tab.active{background:#27272a;color:#fafafa;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+
+.bar-container{margin-bottom:8px}
+.bar-label{display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:4px;color:#a1a1aa}
+.bar-track{background:#27272a;border-radius:6px;overflow:hidden;height:8px}
+.bar-fill{height:100%;border-radius:6px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+
+table{width:100%;border-collapse:separate;border-spacing:0}
+thead th{text-align:left;color:#52525b;font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:.75rem 0;border-bottom:1px solid #27272a}
+thead th:last-child{text-align:right}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:rgba(39,39,42,.5)}
+tbody td{padding:.65rem 0;border-bottom:1px solid rgba(39,39,42,.5);font-size:.82rem;color:#d4d4d8}
+tbody td:last-child{text-align:right;color:#71717a;font-variant-numeric:tabular-nums}
+
+.spark{display:flex;align-items:flex-end;gap:3px;height:80px;padding-top:8px}
+.spark-bar{background:linear-gradient(to top,#7c3aed,#a78bfa);border-radius:4px 4px 2px 2px;min-width:6px;flex:1;transition:height .4s cubic-bezier(.4,0,.2,1);position:relative;cursor:pointer;opacity:.8}
+.spark-bar:hover{opacity:1;transform:scaleY(1.02);transform-origin:bottom}
+.spark-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#27272a;border:1px solid #3f3f46;color:#fafafa;font-size:.65rem;padding:4px 8px;border-radius:6px;white-space:nowrap;z-index:10;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.spark-bar:hover .spark-tooltip{display:block}
+
+.empty{color:#3f3f46;font-size:.8rem;text-align:center;padding:2rem 0}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;animation:pulse 2s ease-in-out infinite}
+.header-sub{color:#52525b;font-size:.8rem;font-weight:400}
+</style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+<div class="max-w-6xl mx-auto">
+
+<!-- Header -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4 fade-in">
+  <div>
+    <h1 class="text-xl font-bold text-zinc-100 flex items-center gap-3">
+      Analytics
+      <span class="live-dot" title="Auto-refreshing"></span>
+    </h1>
+    <p class="header-sub mt-1" id="last-updated"></p>
+  </div>
+  <div class="tab-group" id="tabs">
+    <div class="tab" data-days="1">24h</div>
+    <div class="tab active" data-days="7">7d</div>
+    <div class="tab" data-days="30">30d</div>
+    <div class="tab" data-days="90">90d</div>
+  </div>
+</div>
+
+<!-- Stat Cards -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <div class="card stat-card fade-in fade-in-1">
+    <h3><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Page Views</h3>
+    <div class="value" id="total-views">-</div>
+    <div class="sub" id="views-avg"></div>
+  </div>
+  <div class="card stat-card fade-in fade-in-2">
+    <h3><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Unique Visitors</h3>
+    <div class="value" id="unique-visitors">-</div>
+    <div class="sub" id="visitors-sub"></div>
+  </div>
+  <div class="card stat-card fade-in fade-in-3">
+    <h3><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Pages / Visitor</h3>
+    <div class="value" id="pages-per-visitor">-</div>
+  </div>
+  <div class="card stat-card fade-in fade-in-4">
+    <h3><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Top Device</h3>
+    <div class="value text-xl" id="top-device">-</div>
+  </div>
+</div>
+
+<!-- Charts Row -->
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+  <div class="card md:col-span-2 fade-in">
+    <h3><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Daily Views</h3>
+    <div class="spark" id="daily-chart"></div>
+    <div class="flex justify-between text-xs mt-2" style="color:#52525b" id="daily-labels"></div>
+  </div>
+  <div class="card fade-in">
+    <h3><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>Devices</h3>
+    <div id="devices" class="mt-2"></div>
+  </div>
+</div>
+
+<!-- Tables Row -->
+<div class="grid md:grid-cols-2 gap-4 mb-6">
+  <div class="card fade-in">
+    <h3><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>Popular Pages</h3>
+    <table><thead><tr><th>Page</th><th>Views</th></tr></thead><tbody id="pages-table"></tbody></table>
+  </div>
+  <div class="card fade-in">
+    <h3><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Top Referrers</h3>
+    <table><thead><tr><th>Source</th><th>Visits</th></tr></thead><tbody id="referrers-table"></tbody></table>
+  </div>
+</div>
+
+<!-- Bottom Row -->
+<div class="grid md:grid-cols-2 gap-4">
+  <div class="card fade-in">
+    <h3><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>Section Views</h3>
+    <div id="sections" class="mt-2"></div>
+  </div>
+  <div class="card fade-in">
+    <h3><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Top Clicks</h3>
+    <table><thead><tr><th>Element</th><th>Clicks</th></tr></thead><tbody id="clicks-table"></tbody></table>
+  </div>
+</div>
+
+</div>
+
+<script>
+let currentDays = 7;
+const colors = ['#a78bfa','#6ee7b7','#fbbf24','#f87171','#818cf8','#2dd4bf'];
+
+async function load(days) {
+  currentDays = days;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', +t.dataset.days === days));
+  try {
+    const res = await fetch('/analytics/stats?days=' + days);
+    const d = await res.json();
+    render(d, days);
+    document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+  } catch (e) {
+    console.error('Failed to load:', e);
+  }
+}
+
+function render(d, rangeDays) {
+  // Stats
+  document.getElementById('total-views').textContent = d.total_views.toLocaleString();
+  document.getElementById('unique-visitors').textContent = d.unique_visitors.toLocaleString();
+  document.getElementById('pages-per-visitor').textContent = d.unique_visitors ? (d.total_views / d.unique_visitors).toFixed(1) : '-';
+
+  const avgPerDay = rangeDays > 0 ? (d.total_views / rangeDays).toFixed(1) : '-';
+  document.getElementById('views-avg').textContent = avgPerDay + ' avg/day';
+
+  // Top device
+  const topDev = document.getElementById('top-device');
+  if (d.devices.length) {
+    const top = d.devices.reduce((a, b) => b.count > a.count ? b : a);
+    topDev.textContent = (top.device_type || 'unknown').charAt(0).toUpperCase() + (top.device_type || 'unknown').slice(1);
+  } else {
+    topDev.textContent = '-';
+  }
+
+  // Daily chart
+  const chart = document.getElementById('daily-chart');
+  const labels = document.getElementById('daily-labels');
+  const days = (d.daily_views || []).reverse();
+  const max = Math.max(...days.map(v => v.views), 1);
+
+  chart.innerHTML = days.length ? days.map(v => {
+    const h = Math.max((v.views / max) * 100, 3);
+    const dateStr = new Date(v.date + 'T00:00').toLocaleDateString('en-US', {month:'short', day:'numeric'});
+    return `<div class="spark-bar" style="height:${h}%"><div class="spark-tooltip">${dateStr}: ${v.views} views</div></div>`;
+  }).join('') : '<div class="empty" style="width:100%">No data yet</div>';
+
+  if (days.length > 1) {
+    const fmt = d => new Date(d + 'T00:00').toLocaleDateString('en-US', {month:'short', day:'numeric'});
+    labels.innerHTML = `<span>${fmt(days[0].date)}</span><span>${fmt(days[days.length-1].date)}</span>`;
+  } else {
+    labels.innerHTML = '';
+  }
+
+  // Devices
+  const devTotal = d.devices.reduce((s, v) => s + v.count, 0) || 1;
+  document.getElementById('devices').innerHTML = d.devices.length ? d.devices.map((v, i) => {
+    const pct = ((v.count / devTotal) * 100).toFixed(1);
+    const name = (v.device_type || 'unknown').charAt(0).toUpperCase() + (v.device_type || 'unknown').slice(1);
+    return `<div class="bar-container">
+      <div class="bar-label"><span>${esc(name)}</span><span>${pct}% (${v.count})</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${colors[i%colors.length]}"></div></div>
+    </div>`;
+  }).join('') : '<div class="empty">No data yet</div>';
+
+  // Pages
+  document.getElementById('pages-table').innerHTML = d.popular_pages.length ? d.popular_pages.map(p =>
+    `<tr><td style="max-width:200px" class="truncate">${esc(p.page_title || p.page_url)}</td><td>${p.views}</td></tr>`
+  ).join('') : '<tr><td colspan="2"><div class="empty">No data yet</div></td></tr>';
+
+  // Referrers
+  document.getElementById('referrers-table').innerHTML = d.top_referrers.length ? d.top_referrers.map(r =>
+    `<tr><td style="max-width:200px" class="truncate">${esc(r.referrer)}</td><td>${r.count}</td></tr>`
+  ).join('') : '<tr><td colspan="2"><div class="empty">No data yet</div></td></tr>';
+
+  // Sections
+  const secTotal = d.section_views.reduce((s, v) => s + v.count, 0) || 1;
+  document.getElementById('sections').innerHTML = d.section_views.length ? d.section_views.map((v, i) => {
+    let name;
+    try { name = JSON.parse(v.event_data).section || v.event_data; } catch(e) { name = v.event_data; }
+    name = name.charAt(0).toUpperCase() + name.slice(1);
+    const pct = ((v.count / secTotal) * 100).toFixed(1);
+    return `<div class="bar-container">
+      <div class="bar-label"><span>${esc(name)}</span><span>${pct}% (${v.count})</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${colors[i%colors.length]}"></div></div>
+    </div>`;
+  }).join('') : '<div class="empty">No data yet</div>';
+
+  // Clicks
+  document.getElementById('clicks-table').innerHTML = d.top_clicks.length ? d.top_clicks.map(c => {
+    let label;
+    try { const p = JSON.parse(c.event_data); label = p.text || p.href || c.event_data; } catch(e) { label = c.event_data; }
+    return `<tr><td style="max-width:200px" class="truncate">${esc(label)}</td><td>${c.count}</td></tr>`;
+  }).join('') : '<tr><td colspan="2"><div class="empty">No data yet</div></td></tr>';
+}
+
+function esc(s) {
+  const el = document.createElement('div');
+  el.textContent = s;
+  return el.innerHTML;
+}
+
+document.getElementById('tabs').addEventListener('click', e => {
+  if (e.target.dataset.days) load(+e.target.dataset.days);
+});
+
+load(7);
+setInterval(() => load(currentDays), 30000);
+</script>
+</body>
+</html>
