@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /analytics/
+Disallow: /auth/
+Disallow: /leaderboard/
+Disallow: /stats
+Disallow: /health
+Disallow: /secret.html
+
+Sitemap: https://wynandcv.com/sitemap.xml
