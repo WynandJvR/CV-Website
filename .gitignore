@@ -2,4 +2,5 @@
 nohup.out
 analytics-dashboard.html
 **/node_modules/
-.claude/
+.cl*/
+CL*.md
