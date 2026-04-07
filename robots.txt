@@ -7,5 +7,6 @@ Disallow: /leaderboard/
 Disallow: /stats
 Disallow: /health
 Disallow: /secret.html
+Disallow: /demo/
 
 Sitemap: https://wynandcv.com/sitemap.xml
